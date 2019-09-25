@@ -1,6 +1,36 @@
-# Pull base image 
-From tomcat:8-jre8 
+FROM ubuntu:18.04
 
-# Maintainer 
-MAINTAINER "valaxytech@gmail.com" 
-COPY ./webapp.war /usr/local/tomcat/webapps
+ 
+
+SHELL ["/bin/bash", "-c"]
+
+ 
+
+# Update OS and Install required packages
+RUN apt-get update
+RUN apt-get install vim -y
+
+ 
+
+# Git Install
+RUN apt-get install --yes --no-install-recommends git 
+RUN git --version 
+RUN git config --global user.email "PranotiM@hexaware.com" 
+RUN git config --global user.name "Pranoti"
+
+ 
+
+# JDK Install
+RUN apt-get install --yes --no-install-recommends openjdk-11-jdk 
+RUN java -version
+
+ 
+
+# Maven Install
+RUN apt-get install --yes --no-install-recommends maven 
+RUN mvn --version
+
+ 
+
+# Jenkins userid
+RUN useradd -m -s /bin/bash jenkins

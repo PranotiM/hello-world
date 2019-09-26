@@ -12,7 +12,7 @@ pipeline {
         stage('scm')
         {
             steps {
-                git branch: 'master', url: "git@ssh.dev.azure.com:v3/HexaDevOpsAnalytics/DevOpsAnalytics/prasad-maven-project"
+                git branch: 'master', url: "https://github.com/PranotiM/hello-world.git"
             }
             
         }
@@ -27,8 +27,13 @@ pipeline {
         {
             steps 
             {
-                sh 'verify sonar:sonar -Dsonar.projectKey=mavenproject -Dsonar.host.url=http://localhost:9000 -Dsonar.login=fc93de91cb6da2fef0fc52756897d53aacba31e5'
+                withSonarQubeEnv('Local Sonar') 
+                {
+                    sh 'mvn clean package sonar:sonar'
+                }
+    
             }    
         }
     }
 }
+

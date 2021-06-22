@@ -1,4 +1,6 @@
-FROM nginx
-RUN rm /etc/nginx/nginx.conf /etc/nginx/conf.d/default.conf
-COPY content /usr/share/nginx/html
-COPY conf /etc/nginx
+
+FROM ubuntu 
+
+RUN apt-get update 
+RUN apt-get install –y nginx 
+CMD [“echo”,”Image created”] 

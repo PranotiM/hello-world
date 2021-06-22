@@ -38,3 +38,24 @@ jobs:
       run: |
         # Building Docker Images
            docker build -t java:$GITHUB_RUN_NUMBER .
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-2
+
+    - name: AWS ECR
+      uses: kciter/aws-ecr-action@v3
+      with:
+        # The AWS access key id
+        access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }} 
+        # The AWS secret access key
+        secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        # Name of your ECR repository
+        repo: myrepo
+        # The AWS region
+        region: us-east-2
+        # Name of Dockerfile to use
+        dockerfile: Dockerfile
+

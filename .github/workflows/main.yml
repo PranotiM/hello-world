@@ -53,6 +53,7 @@ jobs:
         # The AWS secret access key
         secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         # Name of your ECR repository
+        account_id: 549450938468
         repo: myrepo
         # The AWS region
         region: us-east-2

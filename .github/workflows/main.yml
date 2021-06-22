@@ -15,6 +15,16 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@master
+    - name: Linting and Static Analysis
+      run: |
+        # Install hadolint
+        DOWNLOAD_URL="https://github.com/hadolint/hadolint/releases/download/v1.17.5/hadolint-Linux-x86_64"
+        LOCAL_FILE=./hadolint
+        curl -Lo $LOCAL_FILE $DOWNLOAD_URL
+        chmod +x $LOCAL_FILE
+        sudo mv $LOCAL_FILE /usr/local/bin
+        # lint Dockerfile with exceptions(example)
+        hadolint --ignore DL3018 --ignore DL3007 $(find . -name 'Dockerfile')
     - name: Set Build Info
       env:
         ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
@@ -33,3 +43,7 @@ jobs:
         # Use 'sha' when on master tag convention
         [ "$VERSION" == "master" ] && VERSION=$(echo "${{ github.sha }}" | cut -c1-7)
         echo ::set-env name=IMG_VERSION::$(echo "sha-$VERSION")
+    - name: Build Docker Image
+      run: |
+        # Building Docker Images
+           docker build -t java:$GITHUB_RUN_NUMBER .

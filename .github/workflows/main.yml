@@ -2,10 +2,6 @@ name: CI Build Testing
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
@@ -15,48 +11,22 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@master
-
-    - name: Set Build Info
-      env:
-        ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
-      run: |
-        export BUILD_NAME="${GITHUB_REPOSITORY//[\/]/-}"
-        BUILD_NAME+="-master"
-        echo "$BUILD_NAME"
-        export BUILD_URL="https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_NUMBER"
-        echo ::set-env name=JFROG_CLI_BUILD_NAME::$(echo $BUILD_NAME)
-        echo ::set-env name=JFROG_CLI_BUILD_NUMBER::$(echo $GITHUB_RUN_NUMBER)
-        echo ::set-env name=JFROG_CLI_BUILD_URL::$(echo $BUILD_URL)
-        VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-        echo $VERSION
-        # Strip "v" prefix from tag name
-        [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
-        # Use 'sha' when on master tag convention
-        [ "$VERSION" == "master" ] && VERSION=$(echo "${{ github.sha }}" | cut -c1-7)
-        echo ::set-env name=IMG_VERSION::$(echo "sha-$VERSION")
-    - name: Build Docker Image
-      run: |
-        # Building Docker Images
-           docker build -t java:$GITHUB_RUN_NUMBER .
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-2
-
     - name: AWS ECR
       uses: kciter/aws-ecr-action@v3
       with:
-        # The AWS access key id
         access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }} 
-        # The AWS secret access key
         secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        # Name of your ECR repository
         account_id: 549450938468
         repo: myrepo
-        # The AWS region
         region: us-east-2
-        # Name of Dockerfile to use
         dockerfile: Dockerfile
+        tags: $GITHUB_RUN_NUMBER
+    - name: AWS Lambda Deploy
+      uses: appleboy/lambda-action@master
+      with:
+        aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws_region: ${{ secrets.AWS_REGION }}
+        function_name: myfunction
+        dry_run: true
 

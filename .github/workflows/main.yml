@@ -11,22 +11,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@master
-    - name: AWS ECR
-      uses: kciter/aws-ecr-action@v3
-      with:
-        access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }} 
-        secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        account_id: 549450938468
-        repo: myrepo
-        region: us-east-2
-        dockerfile: Dockerfile
-        tags: ${{ env.GITHUB_RUN_NUMBER }}
-    - name: AWS Lambda Deploy
-      uses: appleboy/lambda-action@master
-      with:
-        aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws_region: ${{ secrets.AWS_REGION }}
-        function_name: myfunction
-        dry_run: true
+    - name: AWS CLI
+      uses: ItsKarma/aws-cli@v1.70.0
+          aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 549450938468.dkr.ecr.us-east-2.amazonaws.com
+          aws lambda create-function --region us-east-2 --function-name my-function --package-type Image --code ImageUri=549450938468.dkr.ecr.us-east-2.amazonaws.com/myrepo:latest
 

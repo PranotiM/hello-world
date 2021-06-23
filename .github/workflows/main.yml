@@ -20,7 +20,7 @@ jobs:
         repo: myrepo
         region: us-east-2
         dockerfile: Dockerfile
-        tags: ${{ GITHUB_RUN_NUMBER }}
+        tags: ${{ env.GITHUB_RUN_NUMBER }}
     - name: AWS Lambda Deploy
       uses: appleboy/lambda-action@master
       with:

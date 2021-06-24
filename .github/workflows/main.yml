@@ -2,10 +2,14 @@ name: CI Build Testing
 on:
   push:
     branches: [ master ]
+    paths-ignore:
+      - Jenkinsfile
+      - Readme.md
+      - pom.xml
   workflow_dispatch:
 
 jobs:
-  build-and-push:
+  build:
     name: Build and deploy
     runs-on: ubuntu-latest
     steps:
@@ -29,8 +33,28 @@ jobs:
         ECR_REPOSITORY: myrepo
         IMAGE_TAG: ${{ github.run_number }}
       run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        VALUEFILE=$(git --no-pager diff --name-only HEAD~1 | sort -u | awk 'BEGIN {FS="/"}  {print $1}' | uniq)
+        for folder in ${LIST=$(echo $VALUEFILE | grep -o '[^ ]\+')}
+        do
+           if [ -e $folder/Dockerfile ];
+           then
+               docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+               docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+               
+           fi
+        done
+  Release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Lambda deployment
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: myrepo
+        IMAGE_TAG: ${{ github.run_number }}
+      run: |
         #Trigger Lambda
         aws lambda update-function-code --region us-east-2 --function-name my-function --image-uri $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+    
+  
 

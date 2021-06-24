@@ -14,7 +14,11 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'pull_request' || github.event_name == 'push' }}
     steps:
-    - uses: dorny/paths-filter@v2
+    - name: Checkout
+      uses: actions/checkout@master
+    
+    - name: folder_change
+      uses: dorny/paths-filter@v2
       id: changes
       with:
         filters: |
@@ -31,7 +35,11 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'pull_request' || github.event_name == 'push' }}
     steps:
-    - uses: dorny/paths-filter@v2
+    - name: Checkout
+      uses: actions/checkout@master
+
+    - name: folder_change
+      uses: dorny/paths-filter@v2
       id: changes
       with:
         filters: |

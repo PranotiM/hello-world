@@ -36,7 +36,9 @@ jobs:
     if: ${{ github.event_name == 'pull_request' || github.event_name == 'push' }}
     steps:
     - name: Checkout
-      uses: actions/checkout@master  
+      uses: actions/checkout@master
+    - name: artifact
+      uses: actions/download-artifact@v1
     - name: folder_change
       uses: dorny/paths-filter@v2
       id: filter
@@ -47,6 +49,7 @@ jobs:
           webapp:
             - 'webapp/**'
     - name: server_tests
+      
       if: steps.filter.outputs.server == 'true'
       run: |
             cd server

@@ -39,14 +39,12 @@ jobs:
             - 'server/**'
           webapp:
             - 'webapp/**'
-			
     - name: server_tests      
       if: steps.filter.outputs.server == 'true'
       run: |
             cd server
             docker build -t $ECR_REGISTRY/$ECR_REPOSITORY/server:$IMAGE_TAG .
             docker push $ECR_REGISTRY/$ECR_REPOSITORY/server:$IMAGE_TAG
-
     - name: webapp_tests
       if: steps.filter.outputs.webapp == 'true'
       run: |

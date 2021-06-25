@@ -30,6 +30,7 @@ pipeline {
                 withSonarQubeEnv('Local Sonar') 
                 {
                     sh 'mvn clean package sonar:sonar'
+
                 }
     
             }    

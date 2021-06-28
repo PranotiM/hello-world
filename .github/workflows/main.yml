@@ -43,6 +43,7 @@ jobs:
             cd server
             docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
             docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+            aws lambda update-function-code --region us-east-2 --function-name my-function --image-uri $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
     - name: webapp
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -53,4 +54,5 @@ jobs:
             cd server
             docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
             docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+            aws lambda update-function-code --region us-east-2 --function-name myfunction --image-uri $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 

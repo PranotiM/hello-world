@@ -55,7 +55,7 @@ jobs:
         IMAGE_TAG: ${{ github.run_number }}
       if: steps.filter.outputs.webapp == 'true'
       run: |
-            cd server
+            cd webapp
             docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
             docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
             aws lambda update-function-code --region us-east-2 --function-name myfunction --image-uri $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG

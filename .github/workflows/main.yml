@@ -2,6 +2,8 @@ name: Java Microservice Deployment
 on:
   push:
     branches: [ master ]
+  pull_request:
+    branches: [ master ]
     paths-ignore:
       - Jenkinsfile
       - Readme.md

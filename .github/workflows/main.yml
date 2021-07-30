@@ -27,6 +27,8 @@ jobs:
 #      uses: actions/create-release@v1
       env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          RELEASE_BRANCHES: release.*,hotfix.*,master
+          WITH_V: true
 #      with:
 #          tag_name: ${{ steps.tag_version.outputs.new_tag }}
 #          release_name: Release ${{ steps.tag_version.outputs.new_tag }}
